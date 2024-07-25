@@ -15,12 +15,10 @@ except ImportError:
 import time
 
 HTTP_LLM_API_KEY=''
-OPENAI_API_KEY=''
 DASHSCOPE_API_KEY=''
 
 
 def call_openai_api(model, input_text, max_tokens=256, temperature=0.0, n=1):
-    openai.api_key = OPENAI_API_KEY
     error_times = 0
     
     while error_times < 5:
