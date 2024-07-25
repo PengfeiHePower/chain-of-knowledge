@@ -60,8 +60,8 @@ def llama2_pipeline(prompt):
 
 def gpt_pipeline(prompt):
     import requests
-    HTTP_LLM_API_KEY='eyJ0eXAiOiJqd3QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IjM5NDc3MyIsInBhc3N3b3JkIjoiMzk0NzczMTIzIiwiZXhwIjoyMDIxNjE4MzE3fQ.oQx2Rh-GJ_C29AfHTHE4x_2kVyy7NamwQRKRA4GPA94'
-    OPENAI_API_KEY='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'
+    HTTP_LLM_API_KEY=''
+    OPENAI_API_KEY=''
     # print(f"prompt:{prompt}")
 
     url = "http://47.88.8.18:8088/api/ask"

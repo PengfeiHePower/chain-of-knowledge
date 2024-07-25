@@ -5,30 +5,19 @@ import os
 import requests
 import json
 
-HTTP_LLM_API_KEY='eyJ0eXAiOiJqd3QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IjM5NDc3MyIsInBhc3N3b3JkIjoiMzk0NzczMTIzIiwiZXhwIjoyMDIxNjE4MzE3fQ.oQx2Rh-GJ_C29AfHTHE4x_2kVyy7NamwQRKRA4GPA94'
-OPENAI_API_KEY='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'
 
 try:
 	import dashscope
 except ImportError:
 	dashscope = None
+
  
 import time
 
-# def get_response(query, model="gpt-4"):
-#     url = "http://47.88.8.18:8088/api/ask"
-#     headers = {
-#         "Content-Type": "application/json",
-#         "Authorization": "Bearer xxxxxx"
-#     }
-#     data = {
-#         "model": model,
-#         "messages": [{"role": "user", "content": query}],
-#         "n": 1,
-#         "temperature": 0.0
-#     }
-#     response = requests.post(url, json=data, headers=headers)
-#     return response.json()
+HTTP_LLM_API_KEY=''
+OPENAI_API_KEY=''
+DASHSCOPE_API_KEY=''
+
 
 def call_openai_api(model, input_text, max_tokens=256, temperature=0.0, n=1):
     openai.api_key = OPENAI_API_KEY
@@ -85,8 +74,7 @@ def call_openai_api(model, input_text, max_tokens=256, temperature=0.0, n=1):
                 new_response = response['data']['response']
                 return [new_response, new_response["choices"][0]["message"]["content"]]
             elif model == 'qwen':
-                api_key = 'sk-94d038e92230451a87ac37ac34dd6a8a'
-                dashscope.api_key = api_key
+                dashscope.api_key = DASHSCOPE_API_KEY
                 response = dashscope.Generation.call(
 			        model='qwen-max',
 			        messages=[
@@ -99,8 +87,7 @@ def call_openai_api(model, input_text, max_tokens=256, temperature=0.0, n=1):
                 new_response = response.output
                 return [new_response, new_response["choices"][0]["message"]["content"]]
             elif model == 'qwen2-57':
-                api_key = 'sk-94d038e92230451a87ac37ac34dd6a8a'
-                dashscope.api_key = api_key
+                dashscope.api_key = DASHSCOPE_API_KEY
                 response = dashscope.Generation.call(
                 model='qwen2-57b-a14b-instruct',
                 messages=[
@@ -113,8 +100,7 @@ def call_openai_api(model, input_text, max_tokens=256, temperature=0.0, n=1):
                 new_response = response.output
                 return [new_response, new_response["choices"][0]["message"]["content"]]
             elif model == 'llama3-70':
-                api_key = 'sk-94d038e92230451a87ac37ac34dd6a8a'
-                dashscope.api_key = api_key
+                dashscope.api_key = DASHSCOPE_API_KEY
                 response = dashscope.Generation.call(
                 model='llama3-70b-instruct',
                 messages=[
