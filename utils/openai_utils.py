@@ -6,11 +6,6 @@ import requests
 import json
 
 
-try:
-	import dashscope
-except ImportError:
-	dashscope = None
-
  
 import time
 
