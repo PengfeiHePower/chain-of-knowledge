@@ -9,9 +9,9 @@ import json
  
 import time
 
-HTTP_LLM_API_KEY = os.getenv("HTTP_LLM_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY")
+HTTP_LLM_API_KEY = ''
+OPENAI_API_KEY = ''
+DASHSCOPE_API_KEY = ''
 
 
 def call_openai_api(model, input_text, max_tokens=256, temperature=0.0, n=1):
