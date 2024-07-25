@@ -69,7 +69,7 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=str, help="Output path")
     parser.add_argument("--step", type=bool, default=False, help="Whether to edit the rationales step by step")
     parser.add_argument("--num_train", type=int, default=3, help="How many demonstration samples to use")
-    parser.add_argument("--num_test", type=int, default=5, help="How many test samples to use")
+    parser.add_argument("--num_test", type=int, default=10, help="How many test samples to use")
     parser.add_argument("--threshold", type=float, default=0.5, help="sc threshold for ka answer")
     parser.add_argument("--one_shot", action="store_true", help="Whether to use 1-shot setting")
     parser.add_argument("--six_shot", action="store_true", help="Whether to use 6-shot setting")

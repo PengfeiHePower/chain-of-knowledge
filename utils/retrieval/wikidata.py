@@ -62,8 +62,31 @@ def llama2_pipeline(prompt):
         eos_token_id=utils.globalvar.tokenizer.eos_token_id,
         max_length=256,
     )
-    
+
     return sequences[0]["generated_text"].strip()
+
+def gpt_pipeline(prompt):
+    import requests
+    HTTP_LLM_API_KEY='eyJ0eXAiOiJqd3QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IjM5NDc3MyIsInBhc3N3b3JkIjoiMzk0NzczMTIzIiwiZXhwIjoyMDIxNjE4MzE3fQ.oQx2Rh-GJ_C29AfHTHE4x_2kVyy7NamwQRKRA4GPA94'
+    OPENAI_API_KEY='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'
+    # print(f"prompt:{prompt}")
+
+    url = "http://47.88.8.18:8088/api/ask"
+    headers = {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + HTTP_LLM_API_KEY
+            }
+    data = {
+            "model": 'gpt-4',
+            "messages": [{"role": "user", "content": prompt}],
+            "n": 1,
+            "temperature": 0.0
+            }
+    response = requests.post(url, json=data, headers=headers)
+    response = response.json()
+    new_response = response['data']['response']
+
+    return new_response["choices"][0]["message"]["content"].strip()
 
 ###############################################
 
@@ -110,7 +133,10 @@ def get_elements(string):
         return None
     
 def post_process_query(string):
-    query1 = string.split('Correct query:')[-1].strip().split('Incorrect query 1')[0].strip()
+    # query1 = string.split('Correct query:')[-1].strip().split('Incorrect query 1')[0].strip()
+    print(f"string:{string}")
+    query1 = string.split('Incorrect Queries:')[0].split('\n```\n')[1]
+    print(f"query1:{query1}")
     get_elements_results = get_elements(query1)
     if get_elements_results is not None:
         entity_list, relation_list = get_elements_results[0], get_elements_results[1]
@@ -141,26 +167,32 @@ def post_process_query(string):
 
 
 def query_wiki(query):
-  endpoint_url = "https://query.wikidata.org/sparql"
+    endpoint_url = "https://query.wikidata.org/sparql"
+    prefixes = """
+        PREFIX wd: <http://www.wikidata.org/entity/>
+        PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        """
+    query_complete = prefixes+"\n"+query
 
-  # Create a SPARQLWrapper object and set the endpoint URL
-  sparql = SPARQLWrapper(endpoint_url)
+    # Create a SPARQLWrapper object and set the endpoint URL
+    sparql = SPARQLWrapper(endpoint_url)
 
-  # Set the SPARQL query
-  sparql.setQuery(query)
+    # Set the SPARQL query
+    sparql.setQuery(query_complete)
 
-  # Set the returned format to JSON
-  sparql.setReturnFormat(JSON)
+    # Set the returned format to JSON
+    sparql.setReturnFormat(JSON)
 
-  # Execute the query and fetch the results
-  results = sparql.query().convert()
+    # Execute the query and fetch the results
+    results = sparql.query().convert()
 
-  # Process the results
-  item_labels = []
-  for result in results["results"]["bindings"]:
-      item_labels.append(result)
+    # Process the results
+    item_labels = []
+    for result in results["results"]["bindings"]:
+        item_labels.append(result)
       
-  return item_labels
+    return item_labels
 
 
 def get_entity_name(entity_id):
@@ -218,7 +250,8 @@ def get_wiki_info(list_of_info):
 
 def generate_wikidata_query(input, data_point):
     prompt = formatting_prompts_func(input)
-    query = llama2_pipeline(prompt)
+    print(f"prompt:{prompt}")
+    query = gpt_pipeline(prompt)
     processed_query = post_process_query(query)
     return query, processed_query
 
@@ -238,8 +271,12 @@ def execute_wikidata_query(query, processed_query):
 def retrieve_wikidata_knowledge(input, data_point):
     print("Generate query...")
     query, processed_query = generate_wikidata_query(input, data_point)
-    print(processed_query)
+    # with open("my_string.txt", "w") as file:
+    #     file.write(query)
+    # exit(0)
+    # input(111)
     print("Retrieve knowledge...")
     knowl = execute_wikidata_query(query, processed_query)
-    print(knowl)
+    print(f"knowl:{knowl}")
+    # exit(0)
     return knowl

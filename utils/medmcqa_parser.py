@@ -3,6 +3,7 @@ import json
 from utils.openai_utils import call_openai_api
 from utils.knowl_query import retrieve_knowledge
 from utils.other_prompts import medmcqa_s1_prompt_demonstration, medmcqa_s2_edit_prompt_demonstration
+import re
 
 class medmcqa:
     def __init__(self):
@@ -72,20 +73,34 @@ class medmcqa:
             # all_cot_results = [x.split("The answer is")[1].strip().lower() for x in all_cot_text_response]
             
             # find the most common answer and indices in all_cot_results
-            most_common_answer = max(set(all_cot_results), key = all_cot_results.count)
-            most_common_answer_indices = [i for i, x in enumerate(all_cot_results) if x == most_common_answer]
+            if len(all_cot_results)>0:
+                most_common_answer = max(set(all_cot_results), key = all_cot_results.count)
+                most_common_answer_indices = [i for i, x in enumerate(all_cot_results) if x == most_common_answer]
             
-            sc_score = float(len(most_common_answer_indices)) / len(all_cot_results)
+                sc_score = float(len(most_common_answer_indices)) / len(all_cot_results)
             
-            # use the first answer as cot answer
-            cot_answer = all_cot_results[0]
+                # use the first answer as cot answer
+                cot_answer = all_cot_results[0]
             
-            # cot_sc answer and rationales
-            cot_sc_text_response = all_cot_text_response[most_common_answer_indices[0]]
-            print(cot_sc_text_response)
-            cot_sc_rationale_1 = cot_sc_text_response.split("Second, ")[0].strip().split("First, ")[1].strip()
-            cot_sc_rationale_2 = cot_sc_text_response.split("Second, ")[1].strip().split("The answer is")[0].strip()
-            cot_sc_answer = most_common_answer
+                # cot_sc answer and rationales
+                cot_sc_text_response = all_cot_text_response[most_common_answer_indices[0]]
+                print(cot_sc_text_response)
+                match_1 = re.search(r'\b(Second|Secondly)\b', cot_sc_text_response)
+                cot_sc_rationale_1 = cot_sc_text_response[:match_1.start()].strip()
+                # cot_sc_rationale_1 = cot_sc_text_response.split("Second, ")[0].strip().split("First, ")[1].strip()
+                cot_sc_rationale_2 = cot_sc_text_response[match_1.start():].strip()
+                # print(f"cot_sc_rationale_2:{cot_sc_rationale_2}")
+                match_2 = re.search(r'\b(The answer is)\b', cot_sc_rationale_2, re.IGNORECASE)
+                if match_2:
+                    cot_sc_rationale_2 = cot_sc_rationale_2[:match_2.start()].strip()
+                    # cot_sc_rationale_2 = cot_sc_text_response.split("Second, ")[1].strip().split("The answer is")[0].strip()
+                    cot_sc_answer = most_common_answer
+                else:
+                    print("Can not provide valid answer.")
+                    return data_point
+            else:
+                print("Can not provide valid answer.")
+                return data_point
         else:
             raise Exception("Stage 1: OpenAI API call failed")
         

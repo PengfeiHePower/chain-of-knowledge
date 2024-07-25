@@ -300,8 +300,10 @@ def test_linking(
 
 
 def process_titles(
-    path_in: str = "utils/retrieval/linking_data/genre/lang_title2wikidataID-normalized_with_redirect.pkl",
-    path_out="utils/retrieval/linking_data/genre/title_to_id_en.pkl",
+    # path_in: str = "utils/retrieval/linking_data/genre/lang_title2wikidataID-normalized_with_redirect.pkl",
+    # path_out="utils/retrieval/linking_data/genre/title_to_id_en.pkl",
+    path_in: str = "linking_data/genre/lang_title2wikidataID-normalized_with_redirect.pkl",
+    path_out="linking_data/genre/title_to_id_en.pkl",
     languages: List[str] = ("en",),
 ):
     for _ in tqdm(range(1), desc=path_in):

@@ -1,5 +1,5 @@
 from utils.retrieval.wikidata import retrieve_wikidata_knowledge
-from utils.retrieval.wikitable import retrieve_wikitable_knowledge
+# from utils.retrieval.wikitable import retrieve_wikitable_knowledge
 from utils.retrieval.dpr import retrieve_dpr_knowledge
 from utils.retrieval.wikipedia import retrieve_wikipedia_knowledge
 
@@ -15,7 +15,7 @@ from utils.retrieval.physicsclassroom import retrieve_physicsclassroom_knowledge
 # domain and knowledge sources mapping
 domain_mapping = {
     "factual": {
-        "wikidata": retrieve_wikidata_knowledge,
+        # "wikidata": retrieve_wikidata_knowledge,
         # "wikitable": retrieve_wikitable_knowledge,
         # "dpr": retrieve_dpr_knowledge,
         "wikipedia": retrieve_wikipedia_knowledge,
@@ -48,7 +48,7 @@ def retrieve_knowledge(domain, input, data_point):
         for y in domain_sources:
             print("--- Retrieving knowledge from", x, y)
             tmp_knowl = domain_sources[y](input, data_point)
-            # print(tmp_knowl)
+            print(f"knowledge:{tmp_knowl}")
             knowl[x][y] = tmp_knowl
 
     return knowl

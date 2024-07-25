@@ -65,6 +65,8 @@ class fever:
             for x in all_cot_text_response:
                 if "The answer is" in x:
                     all_cot_results.append(x.split("The answer is")[1].strip().lower())
+                elif "the answer is" in x:
+                    all_cot_results.append(x.split("the answer is")[1].strip().lower())
                 else:
                     None
             

@@ -1,0 +1,45 @@
+### Correct Query:
+```
+SELECT ?facultyMember
+WHERE {
+  ?facultyMember dbo:almaMater dbr:University_of_Toronto .
+  ?facultyMember rdfs:label "Roy Shepherd"@en .
+}
+```
+
+### Incorrect Queries:
+
+#### Incorrect Query 1: (Wrong property)
+```
+SELECT ?facultyMember
+WHERE {
+  ?facultyMember dbo:birthPlace dbr:University_of_Toronto .
+  ?facultyMember rdfs:label "Roy Shepherd"@en .
+}
+```
+
+#### Incorrect Query 2: (Wrong resource)
+```
+SELECT ?facultyMember
+WHERE {
+  ?facultyMember dbo:almaMater dbr:University_of_Oxford .
+  ?facultyMember rdfs:label "Roy Shepherd"@en .
+}
+```
+
+#### Incorrect Query 3: (Missing a condition)
+```
+SELECT ?facultyMember
+WHERE {
+  ?facultyMember dbo:almaMater dbr:University_of_Toronto .
+}
+```
+
+#### Incorrect Query 4: (Wrong variable)
+```
+SELECT ?university
+WHERE {
+  ?facultyMember dbo:almaMater ?university .
+  ?facultyMember rdfs:label "Roy Shepherd"@en .
+}
+```

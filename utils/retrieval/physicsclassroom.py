@@ -40,7 +40,7 @@ def call_openai_api(model, input_text, max_tokens=256, temperature=0, n=1):
                     n=n,
                 )
                 return [response, response["choices"][0]["text"]]
-            elif "gpt-" in model:
+            elif "gpt-3.5" in model:
                 # ChatGPT models, chat completion
                 response = openai.ChatCompletion.create(
                     model=model,
@@ -53,6 +53,27 @@ def call_openai_api(model, input_text, max_tokens=256, temperature=0, n=1):
                     n=n,
                 )
                 return [response, response["choices"][0]["message"]["content"]]
+            elif "gpt-4" in model:
+                import requests
+                url = "http://47.88.8.18:8088/api/ask"
+                HTTP_LLM_API_KEY='eyJ0eXAiOiJqd3QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IjM5NDc3MyIsInBhc3N3b3JkIjoiMzk0NzczMTIzIiwiZXhwIjoyMDIxNjE4MzE3fQ.oQx2Rh-GJ_C29AfHTHE4x_2kVyy7NamwQRKRA4GPA94'
+                headers = {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + HTTP_LLM_API_KEY
+                            }
+                data = {
+                        "model": model,
+                        "messages": [
+                            {"role": "system", "content": "You are a helpful assistant."},
+                            {"role": "user", "content": input_text}
+                        ],
+                        "n": n,
+                        "temperature": temperature
+                        }
+                response = requests.post(url, json=data, headers=headers)
+                response = response.json()
+                new_response = response['data']['response']
+                return [new_response, new_response["choices"][0]["message"]["content"]]
             else:
                 raise Exception("Invalid model name")
         except Exception as e:
@@ -67,7 +88,7 @@ def generate_physicsclassroom_query(input, overall_question):
     prompt = verify_question_demonstration + "\nOverall Question: " + overall_question + \
             "\nAnswer: " + input + "\nQuestion: "
             
-    query = call_openai_api("text-davinci-003", prompt, max_tokens=256, temperature=0, n=1)[1].strip()
+    query = call_openai_api("gpt-4", prompt, max_tokens=256, temperature=0, n=1)[1].strip()
     query += " @physicsclassroom"
     return query
 
